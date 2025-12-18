@@ -130,18 +130,18 @@ function App() {
         </p>
 
         {/* Отладочная информация Telegram */}
-        <div className="mt-4 p-3 bg-[var(--bg-card)] rounded-soft border border-[var(--border)] text-left text-xs overflow-auto max-h-48">
-          <p className="font-bold mb-2 text-[var(--text-primary)]">
-            🔧 Telegram Debug Info:
-          </p>
-          {telegramDebug ? (
-            <pre className="text-[var(--text-secondary)] whitespace-pre-wrap break-all">
-              {JSON.stringify(telegramDebug, null, 2)}
-            </pre>
-          ) : (
-            <p className="text-[var(--text-secondary)]">Загрузка...</p>
-          )}
-        </div>
+        {/*<div className="mt-4 p-3 bg-[var(--bg-card)] rounded-soft border border-[var(--border)] text-left text-xs overflow-auto max-h-48">*/}
+        {/*  <p className="font-bold mb-2 text-[var(--text-primary)]">*/}
+        {/*    🔧 Telegram Debug Info:*/}
+        {/*  </p>*/}
+        {/*  {telegramDebug ? (*/}
+        {/*    <pre className="text-[var(--text-secondary)] whitespace-pre-wrap break-all">*/}
+        {/*      {JSON.stringify(telegramDebug, null, 2)}*/}
+        {/*    </pre>*/}
+        {/*  ) : (*/}
+        {/*    <p className="text-[var(--text-secondary)]">Загрузка...</p>*/}
+        {/*  )}*/}
+        {/*</div>*/}
       </footer>
 
       {/* Модальное окно настроек */}
