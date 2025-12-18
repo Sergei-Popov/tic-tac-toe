@@ -232,3 +232,16 @@ export const closeMiniApp = () => {
     console.log("Close not available");
   }
 };
+
+// Получение отладочной информации о Telegram
+export const getTelegramDebugInfo = () => {
+  return {
+    isAvailable: telegramApp?.isAvailable || false,
+    userId: telegramApp?.userId || null,
+    launchParams: telegramApp?.launchParams || null,
+    initDataRaw: telegramApp?.launchParams?.initDataRaw || null,
+    platform: telegramApp?.launchParams?.platform || null,
+    botTokenConfigured: !!BOT_TOKEN,
+    telegramAppState: telegramApp ? "initialized" : "not initialized",
+  };
+};

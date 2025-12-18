@@ -9,19 +9,25 @@ import SettingsPanel from "./components/UI/SettingsPanel";
 import WinScreen from "./components/Results/WinScreen";
 import LoseScreen from "./components/Results/LoseScreen";
 import DrawScreen from "./components/Results/DrawScreen";
-import { initData } from "@telegram-apps/sdk";
-
-initData();
+import { initTelegram, getTelegramDebugInfo } from "./utils/telegram";
 
 function App() {
   const { winner, isDraw, gameOver, initTheme, stats } = useGameStore();
   const { resetGame } = useGame();
   const [showSettings, setShowSettings] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [telegramDebug, setTelegramDebug] = useState(null);
 
-  // Инициализация темы при загрузке
+  // Инициализация Telegram и темы при загрузке
   useEffect(() => {
     initTheme();
+
+    // Инициализируем Telegram SDK
+    const init = async () => {
+      await initTelegram();
+      setTelegramDebug(getTelegramDebugInfo());
+    };
+    init();
   }, [initTheme]);
 
   // Показываем результат после окончания игры с небольшой задержкой
@@ -122,7 +128,20 @@ function App() {
         <p className="text-sm text-[var(--text-secondary)]">
           Выиграй и получи промокод на скидку! 🎁
         </p>
-        <div>{initData}</div>
+
+        {/* Отладочная информация Telegram */}
+        <div className="mt-4 p-3 bg-[var(--bg-card)] rounded-soft border border-[var(--border)] text-left text-xs overflow-auto max-h-48">
+          <p className="font-bold mb-2 text-[var(--text-primary)]">
+            🔧 Telegram Debug Info:
+          </p>
+          {telegramDebug ? (
+            <pre className="text-[var(--text-secondary)] whitespace-pre-wrap break-all">
+              {JSON.stringify(telegramDebug, null, 2)}
+            </pre>
+          ) : (
+            <p className="text-[var(--text-secondary)]">Загрузка...</p>
+          )}
+        </div>
       </footer>
 
       {/* Модальное окно настроек */}
