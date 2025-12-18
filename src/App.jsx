@@ -9,6 +9,9 @@ import SettingsPanel from "./components/UI/SettingsPanel";
 import WinScreen from "./components/Results/WinScreen";
 import LoseScreen from "./components/Results/LoseScreen";
 import DrawScreen from "./components/Results/DrawScreen";
+import { initData } from "@telegram-apps/sdk";
+
+initData();
 
 function App() {
   const { winner, isDraw, gameOver, initTheme, stats } = useGameStore();
@@ -119,6 +122,7 @@ function App() {
         <p className="text-sm text-[var(--text-secondary)]">
           Выиграй и получи промокод на скидку! 🎁
         </p>
+        <div>{initData}</div>
       </footer>
 
       {/* Модальное окно настроек */}
