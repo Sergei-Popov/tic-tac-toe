@@ -1,0 +1,174 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark;
+}
+
+/* Кастомные цвета для пастельной палитры */
+:root {
+  /* Пастельные оттенки */
+  --pastel-pink: #FFB6C1;
+  --pastel-lavender: #E6E6FA;
+  --pastel-peach: #FFDAB9;
+  --pastel-mint: #98FF98;
+
+  /* Землистые тона */
+  --warm-beige: #F5DEB3;
+  --cinnamon: #D2691E;
+  --golden: #DAA520;
+
+  /* Контрастные акценты */
+  --dark-khaki: #BDB76B;
+  --deep-violet: #5D3A6E;
+
+  /* Конфетти цвета */
+  --confetti-1: #FFB6C1;
+  --confetti-2: #E6E6FA;
+  --confetti-3: #FFDAB9;
+  --confetti-4: #98FF98;
+  --confetti-5: #DDA0DD;
+
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --bg-primary: #FFF9F5;
+  --bg-secondary: #FFF0E8;
+  --bg-card: #FFFFFF;
+  --text-primary: #4A3F35;
+  --text-secondary: #7D6B5D;
+  --accent: #D4A5A5;
+  --accent-hover: #C49393;
+  --border: #E8DDD5;
+  --cell-bg: linear-gradient(145deg, #FFF5EE, #FFF0E8);
+  --cell-hover: linear-gradient(145deg, #FFE4D6, #FFDAB9);
+  --symbol-x: #D4A5A5;
+  --symbol-o: #A5C4D4;
+  --win-line: #D4A5A5;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --bg-primary: #1A1615;
+  --bg-secondary: #252220;
+  --bg-card: #2D2926;
+  --text-primary: #F5E6DC;
+  --text-secondary: #C4B5A8;
+  --accent: #B8917A;
+  --accent-hover: #A57D65;
+  --border: #3D3532;
+  --cell-bg: linear-gradient(145deg, #2D2926, #252220);
+  --cell-hover: linear-gradient(145deg, #3D3532, #352F2C);
+  --symbol-x: #D4A5A5;
+  --symbol-o: #A5C4D4;
+  --win-line: #B8917A;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Скругления */
+.rounded-soft {
+  border-radius: 12px;
+}
+
+.rounded-softer {
+  border-radius: 16px;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.animate-bounce-soft {
+  animation: bounce-soft 1s ease-in-out infinite;
+}
+
+/* Градиентный фон */
+.gradient-bg {
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+}
+
+/* Стеклянный эффект */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Кастомный скроллбар */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover);
+}

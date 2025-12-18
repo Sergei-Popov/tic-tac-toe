@@ -1,0 +1,16 @@
+/* Дополнительные стили для игры */
+
+/* Адаптивные улучшения для мобильных устройств */
+@media (max-width: 640px) {
+  .game-board {
+    max-width: 320px;
+  }
+}
+
+/* Safe area для мобильных устройств */
+@supports (padding: max(0px)) {
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
