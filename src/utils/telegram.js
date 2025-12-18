@@ -2,6 +2,9 @@
 
 let telegramApp = null;
 
+// Токен бота из переменных окружения
+const BOT_TOKEN = import.meta.env.VITE_BOT_TOKEN || null;
+
 // Инициализация Telegram SDK
 export const initTelegram = async () => {
   try {
@@ -19,7 +22,16 @@ export const initTelegram = async () => {
       launchParams,
       postEvent,
       isAvailable: true,
+      // Извлекаем user_id из initData для отправки сообщений
+      userId: extractUserId(launchParams),
     };
+
+    console.log("Telegram Mini App initialized:", {
+      isAvailable: true,
+      userId: telegramApp.userId,
+      platform: launchParams?.platform,
+      botTokenConfigured: !!BOT_TOKEN,
+    });
 
     // Разворачиваем Mini App на весь экран
     try {
@@ -45,64 +57,93 @@ export const initTelegram = async () => {
     return telegramApp;
   } catch (error) {
     console.log("Telegram SDK not available:", error);
-    telegramApp = { isAvailable: false };
+    telegramApp = { isAvailable: false, userId: null };
     return telegramApp;
   }
 };
 
-// Отправка данных в бот
-export const sendDataToBot = async (data) => {
-  if (!telegramApp?.isAvailable) {
-    console.log("Telegram not available, data:", data);
+// Извлечение user_id из initData
+const extractUserId = (launchParams) => {
+  try {
+    // initData содержит user в формате: user=%7B%22id%22%3A123456...
+    const initData = launchParams?.initDataRaw;
+    if (!initData) return null;
+
+    const params = new URLSearchParams(initData);
+    const userJson = params.get("user");
+    if (!userJson) return null;
+
+    const user = JSON.parse(decodeURIComponent(userJson));
+    return user?.id || null;
+  } catch (e) {
+    console.log("Error extracting user_id:", e);
+    return null;
+  }
+};
+
+// Отправка сообщения напрямую через Telegram Bot API
+const sendMessageToUser = async (message) => {
+  if (!BOT_TOKEN) {
+    console.warn(
+      "⚠️ VITE_BOT_TOKEN не настроен. Добавьте токен бота в .env файл",
+    );
+    console.log("📤 Сообщение для отправки:", message);
+    return false;
+  }
+
+  if (!telegramApp?.userId) {
+    console.warn("⚠️ User ID не доступен. Приложение запущено вне Telegram?");
+    console.log("📤 Сообщение для отправки:", message);
     return false;
   }
 
   try {
-    telegramApp.postEvent("web_app_send_data", {
-      data: JSON.stringify(data),
-    });
+    const response = await fetch(
+      `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          chat_id: telegramApp.userId,
+          text: message,
+          parse_mode: "HTML",
+        }),
+      },
+    );
+
+    const result = await response.json();
+
+    if (!result.ok) {
+      console.error("Telegram API error:", result.description);
+      return false;
+    }
+
+    console.log("✅ Сообщение отправлено:", message);
     return true;
   } catch (error) {
-    console.error("Error sending data to bot:", error);
+    console.error("Error sending message:", error);
     return false;
   }
 };
 
 // Отправка сообщения о победе
 export const sendWinMessage = async (promoCode) => {
-  const data = {
-    type: "game_result",
-    result: "win",
-    message: `Победа! Промокод выдан: ${promoCode}`,
-    promoCode,
-    timestamp: Date.now(),
-  };
-
-  return sendDataToBot(data);
+  const message = `🎉 <b>Победа!</b>\n\nВаш промокод на скидку:\n<code>${promoCode}</code>\n\nСкопируйте и используйте при заказе!`;
+  return sendMessageToUser(message);
 };
 
 // Отправка сообщения о проигрыше
 export const sendLoseMessage = async () => {
-  const data = {
-    type: "game_result",
-    result: "lose",
-    message: "Проигрыш",
-    timestamp: Date.now(),
-  };
-
-  return sendDataToBot(data);
+  const message = `😔 <b>Проигрыш</b>\n\nНе расстраивайтесь! Попробуйте ещё раз и получите промокод на скидку! 🎁`;
+  return sendMessageToUser(message);
 };
 
 // Отправка сообщения о ничьей
 export const sendDrawMessage = async () => {
-  const data = {
-    type: "game_result",
-    result: "draw",
-    message: "Ничья",
-    timestamp: Date.now(),
-  };
-
-  return sendDataToBot(data);
+  const message = `🤝 <b>Ничья!</b>\n\nОтличная партия! Сыграйте ещё раз, чтобы получить промокод! 🎁`;
+  return sendMessageToUser(message);
 };
 
 // Haptic feedback
