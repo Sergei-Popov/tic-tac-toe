@@ -65,16 +65,28 @@ export const initTelegram = async () => {
 // Извлечение user_id из initData
 const extractUserId = (launchParams) => {
   try {
-    // initData содержит user в формате: user=%7B%22id%22%3A123456...
+    // Способ 1: Проверяем tgWebAppData (новый формат SDK)
+    if (launchParams?.tgWebAppData?.user?.id) {
+      return launchParams.tgWebAppData.user.id;
+    }
+
+    // Способ 2: Проверяем initData (старый формат)
+    if (launchParams?.initData?.user?.id) {
+      return launchParams.initData.user.id;
+    }
+
+    // Способ 3: initDataRaw содержит user в формате: user=%7B%22id%22%3A123456...
     const initData = launchParams?.initDataRaw;
-    if (!initData) return null;
+    if (initData) {
+      const params = new URLSearchParams(initData);
+      const userJson = params.get("user");
+      if (userJson) {
+        const user = JSON.parse(decodeURIComponent(userJson));
+        return user?.id || null;
+      }
+    }
 
-    const params = new URLSearchParams(initData);
-    const userJson = params.get("user");
-    if (!userJson) return null;
-
-    const user = JSON.parse(decodeURIComponent(userJson));
-    return user?.id || null;
+    return null;
   } catch (e) {
     console.log("Error extracting user_id:", e);
     return null;
@@ -235,13 +247,24 @@ export const closeMiniApp = () => {
 
 // Получение отладочной информации о Telegram
 export const getTelegramDebugInfo = () => {
+  const lp = telegramApp?.launchParams;
   return {
     isAvailable: telegramApp?.isAvailable || false,
     userId: telegramApp?.userId || null,
-    launchParams: telegramApp?.launchParams || null,
-    initDataRaw: telegramApp?.launchParams?.initDataRaw || null,
-    platform: telegramApp?.launchParams?.platform || null,
+    userName:
+      lp?.tgWebAppData?.user?.first_name ||
+      lp?.initData?.user?.first_name ||
+      null,
+    platform: lp?.tgWebAppPlatform || lp?.platform || null,
     botTokenConfigured: !!BOT_TOKEN,
     telegramAppState: telegramApp ? "initialized" : "not initialized",
+    // Для отладки - показываем откуда взяли userId
+    userIdSource: lp?.tgWebAppData?.user?.id
+      ? "tgWebAppData"
+      : lp?.initData?.user?.id
+        ? "initData"
+        : lp?.initDataRaw
+          ? "initDataRaw"
+          : "not found",
   };
 };
