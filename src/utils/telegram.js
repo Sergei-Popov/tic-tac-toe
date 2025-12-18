@@ -142,7 +142,7 @@ const sendMessageToUser = async (message) => {
 
 // Отправка сообщения о победе
 export const sendWinMessage = async (promoCode) => {
-  const message = `🎉 <b>Победа!</b>\n\nВаш промокод на скидку:\n<code>${promoCode}</code>\n\nСкопируйте и используйте при заказе!`;
+  const message = `🎉 <b>Победа!</b> Промокод выдан: <code>${promoCode}</code>`;
   return sendMessageToUser(message);
 };
 
